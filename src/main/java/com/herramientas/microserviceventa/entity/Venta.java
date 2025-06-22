@@ -1,4 +1,4 @@
-package com.herramientas.microserviceventa.service;
+package com.herramientas.microserviceventa.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +24,8 @@ public class Venta {
 
     private String nota;
 
-    //cliente
+    private float monto;
 
-    private Long cliente
+    //cliente
+    private Long clientId;
 }
