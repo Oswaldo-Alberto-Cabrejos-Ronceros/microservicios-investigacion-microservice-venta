@@ -2,6 +2,8 @@ package com.herramientas.microserviceventa.service.impl;
 
 import com.herramientas.microserviceventa.dao.IVentaDao;
 import com.herramientas.microserviceventa.entity.Venta;
+import com.herramientas.microserviceventa.feignclients.ClienteFeignClient;
+import com.herramientas.microserviceventa.models.Cliente;
 import com.herramientas.microserviceventa.service.IVentaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,12 @@ import java.util.List;
 public class VentaServiceImpl implements IVentaService {
 
     private final IVentaDao ventaDao;
+    private final ClienteFeignClient clienteFeignClient;
 
     @Autowired
-    public VentaServiceImpl(IVentaDao ventaDao) {
+    public VentaServiceImpl(IVentaDao ventaDao, ClienteFeignClient clienteFeignClient) {
         this.ventaDao = ventaDao;
+        this.clienteFeignClient = clienteFeignClient;
     }
 
     @Transactional(readOnly = true)
@@ -34,7 +38,11 @@ public class VentaServiceImpl implements IVentaService {
     @Transactional
     @Override
     public Venta createVenta(Venta venta) {
-        //despues verificar la exista del cliente
+        //verificamos existencia de cliente
+        Cliente cliente = clienteFeignClient.getClientById(venta.getClientId());
+        if (cliente == null) {
+            throw new RuntimeException("Cliente no encontrado");
+        }
         return ventaDao.save(venta);
     }
 
@@ -46,8 +54,12 @@ public class VentaServiceImpl implements IVentaService {
         oldVenta.setHora(venta.getHora());
         oldVenta.setNota(venta.getNota());
         oldVenta.setMonto(venta.getMonto());
-        //despues verificar existencia de cliente
-        oldVenta.setClientId(venta.getClientId());
+        //verificamos existencia de cliente
+        Cliente cliente = clienteFeignClient.getClientById(venta.getClientId());
+        if (cliente == null) {
+            throw new RuntimeException("Cliente no encontrado");
+        }
+        oldVenta.setClientId(cliente.getId());
         return ventaDao.save(oldVenta);
     }
 
