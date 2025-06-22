@@ -24,7 +24,7 @@ public class Venta {
 
     private String nota;
 
-    private float monto;
+    private Float monto;
 
     //cliente
     private Long clientId;
