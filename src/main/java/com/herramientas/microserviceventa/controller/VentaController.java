@@ -29,6 +29,11 @@ public class VentaController {
         return ResponseEntity.ok(ventaService.getAllVentas());
     }
 
+    @GetMapping("/cliente/{id}")
+    public ResponseEntity<List<Venta>> getVentaByClienteId (@PathVariable Long id) {
+        return ResponseEntity.ok(ventaService.getVentasByClienteId(id));
+    }
+
     @PostMapping
     public ResponseEntity<Venta> createVenta (@RequestBody Venta venta) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ventaService.createVenta(venta));

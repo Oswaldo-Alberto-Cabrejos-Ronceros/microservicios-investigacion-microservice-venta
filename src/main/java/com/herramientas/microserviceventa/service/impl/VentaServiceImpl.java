@@ -35,6 +35,16 @@ public class VentaServiceImpl implements IVentaService {
         return ventaDao.findAll();
     }
 
+    @Override
+    public List<Venta> getVentasByClienteId(Long clienteId) {
+        //verificamos existencia de cliente
+        Cliente cliente = clienteFeignClient.getClientById(clienteId);
+        if (cliente == null) {
+            throw new RuntimeException("Cliente no encontrado");
+        }
+        return ventaDao.findAllByClientId(cliente.getId());
+    }
+
     @Transactional
     @Override
     public Venta createVenta(Venta venta) {
